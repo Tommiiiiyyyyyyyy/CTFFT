@@ -7,10 +7,10 @@ m = 31;
 w = @(x, N) exp(-2i*pi*x/N);
 shift = @(x, M) [zeros(x,M-x),eye(x);eye(M-x),zeros(M-x,x)];
 
-bw = chebwin(W,100);
+bw = chebwin(W,200);
 BW = zeros(n,1);
 BW(1:W) = bw;
-bw_ft = fft(BW);
+bw_ft = abs(fft(BW));
 
 DCW_ft = zeros(n,1);
 
