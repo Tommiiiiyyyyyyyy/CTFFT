@@ -1,16 +1,14 @@
+%ŽŽŒ±
+
 clear
 
 load G.mat;
 load G_ft.mat;
-%load x.mat;
-load TAU.mat;
-load SIGMA.mat;
 
 %x = csvread('x.csv');
 absG = abs(G);
 absGft = abs(G_ft);
 
-% parameter
 n = 256;
 W = 133;
 B = 16;
@@ -20,12 +18,12 @@ d = 1;
 L = 8;
 dk = d*k;
 
-[ x ] = x_sample( n ); % f_translated vector
+[ x ] = x_sample( n );
 
-%TAU = zeros(L,1);
-%SIGMA = zeros(L,1);
+TAU = zeros(L,1);
+SIGMA = zeros(L,1);
 I = zeros(n, L);
-Z_I = zeros(B, L);
+Z_I = zeros(n, L);
 
 w = @(x)(exp(2*pi*i*x/n));
 hash = @(i, j)(round(j*i*B/n)); % j = sigma
@@ -34,17 +32,14 @@ offset = @(i, j)(j*i - round(j*i*B/n)*n/B);
 
 for l = 1:L %to get I and gamma in L: Outer Loop 1
 % make tau & sigma
-%tau = randi(n);
-%sigma = 2*randi(n/2) - 1;
-%TAU(l) = tau;
-%SIGMA(l) = sigma;
-tau = TAU(l);
-sigma = SIGMA(l);
-
+tau = randi(n);
+sigma = 2*randi(n/2) - 1;
+TAU(l) = tau;
+SIGMA(l) = sigma;
 
 
 y = zeros(n,1);
-z = zeros(B,1);
+z = zeros(n,1);
 I_hash = zeros(n, 1);
 for i = 1:n
     sigtau = mod(sigma*i + tau, n);
@@ -52,9 +47,11 @@ for i = 1:n
     y(i) = x(sigtau)*G(i);
     I_hash(i) = hash(i, sigma);
 end
-for i = 1:B
+for i = 1:n
     for j = 0:floor(W/B) - 1
-        z(i) = y(i+j*B);
+        ijB = mod(i + j*B, B);
+        ijB = ijB + (ijB == 0)*B;
+        z(i) = y(ijB);
     end
 end
 z_ft = fft(z);
@@ -64,8 +61,8 @@ z_mag = sort(abs_zft,'descend');
 Z = z_mag(1:dk);
 
 for i = 1:n
-    HASH = mod(I_hash(i), B);
-    HASH = HASH + (HASH == 0)*B;
+    HASH = mod(I_hash(i), n);
+    HASH = HASH + (HASH == 0)*n;
     for j = 1:dk
         if abs_zft(HASH) == Z(j)
             I(i, l) = 1;
