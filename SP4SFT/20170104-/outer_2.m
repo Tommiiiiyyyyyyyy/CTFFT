@@ -9,9 +9,5 @@ for j = 1:n
         s(j) = s(j)+I(j,k);
     end
 end
-
-    
-
-
 end
 
