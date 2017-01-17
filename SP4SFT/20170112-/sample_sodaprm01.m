@@ -8,8 +8,8 @@ load G_ft.mat;
 load TAU.mat;
 load SIGMA.mat;
 
-x = csvread('x.csv');
-x = x';
+%x = csvread('x.csv');
+%x = x';
 
 % parameter
 n = 256;
@@ -21,7 +21,7 @@ d = 1;
 L = 8;
 dk = d*k;
 
-%[ x ] = x_sample( n ); % f_translated vector
+[ x ] = x_sample( n ); % f_translated vector
 
 
 %TAU = zeros(L,1);
@@ -29,7 +29,7 @@ dk = d*k;
 I = zeros(n, L);
 Z_I = zeros(B, L);
 
-w = @(x)(exp(2*pi*i*x/n));
+w = @(x)(exp(2i*pi*x/n));
 hash = @(i, j)(round(j*i*B/n)); % j = sigma
 offset = @(i, j)(j*i - round(j*i*B/n)*n/B);
 shift = @(x, M) [zeros(x,M-x),eye(x);eye(M-x),zeros(M-x,x)];
@@ -43,11 +43,11 @@ w_d = @(x, N) exp(-2i*pi*x/N);
 
 %x = (shift(127, 256)*x')';
 
-G = G(2:end);
-G_ft = G_ft(2:end);
+%G = G(2:end);
+%G_ft = G_ft(2:end);
 
-G = shift(192, 256)*G;
-G_ft = shift(127, 256)*G_ft;
+%G = shift(192, 257)*G;
+%G_ft = shift(192, 257)*G_ft;
 
 absG = abs(G);
 absGft = abs(G_ft);
@@ -74,7 +74,7 @@ for i = 1:n
 end
 for i = 1:B
     for j = 0:floor(W/B) - 1
-        z(i) = y(i+j*B);
+        z(i) = z(i) + y(i+j*B);
     end
 end
 z_ft = fft(z);
@@ -114,7 +114,7 @@ end
 X_hat_d = zeros(n, 1);
 for i = 1:n
     if I_d(i) == 1
-        X_hat_d(i) = median(x_hat(i,:));
+        X_hat_d(i) = complex(median(real(x_hat(i,:))), median(imag(x_hat(i,:))));
         %X_hat_d(i) = mean(x_hat(i,:));
     end
 end
@@ -139,5 +139,6 @@ X_hat_d1(2:end-1) = 2*X_hat_d1(2:end-1);
 PLOT2 = [x_ft1'/max(x_ft1), X_hat_d1/max(X_hat_d1)];
 f = n*(0:(n/2))/n;
 
-plot(f, PLOT2)
+plot(PLOT)
+%plot(f, PLOT2)
 
