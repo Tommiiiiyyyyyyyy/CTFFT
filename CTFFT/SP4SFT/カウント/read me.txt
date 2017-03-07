@@ -1,0 +1,5 @@
+matlab に実装されている DFT の関数 fft() が早すぎるので，
+通常の DFT と SFT との計算量を評価するものを作りました．
+fft() と Inner Loop 6 の estimation Loop での計算数をカウントしています．
+fft(x) の計算量は，x*log2(x)，estimation Loop は計算回数をそのままカウントしています．
+SFT のそれ以外の計算部分についてはカウントしていません．
